@@ -22,9 +22,9 @@ tl <- tl %>%
          date = as.Date(date, origin = "1899-12-30"),
          position = position * direction)
 
-Event_type_levels <- c("Evolution fonctionnelle", "COPIL", "Prix") 
+Event_type_levels <- c("Evolution fonctionnelle", "COPIL", "Institutionnel", "Sous-domaines", "Prix") 
 ## These hashtagged codes represent the colors (blue, green, yellow, red) as hexadecimal color codes.
-Event_type_colors <- c("#C00000", "#FFC000",  "#00B050") # blue = "#0070C0" 
+Event_type_colors <- c("#C00000", "#FFC000",  "#00B050", "brown", "#0070C0")
 
 month_buffer <- 6
 text_offset <- 0.2 
@@ -51,13 +51,10 @@ text_position<- absolute_value + text_offset
 tl$text_position <- text_position * tl$direction 
 
 
-
-
-
 # Create timeline coordinates with an x and y axis
 tl_plot<- ggplot(tl, aes(x=date,y= position, 
-                                  col=type, label=tl$label)) +
-  labs(col="Milestones") + 
+                                  col=type, label = tl$label)) +
+  labs(col=element_blank()) + 
   scale_color_manual(values=Event_type_colors, 
                      labels=Event_type_levels, 
                      drop = FALSE) +
@@ -82,13 +79,19 @@ tl_plot<- ggplot(tl, aes(x=date,y= position,
   #             aes(x = month_date_range, y = -0.15, label = month_format),
   #             size = 3.5, vjust = 0.5, color= 'black', angle = 90) +
   geom_text(data = year_df, 
-            aes(x = year_date_range, y = -0.25, 
-                label = year_format, fontface = "bold"), 
+            aes(x = year_date_range, y = -0.07, 
+                label = paste("I\n", year_format), fontface = "bold"), 
             size = 3.5, color='black') +
-  geom_text(aes(y = tl$text_position, label=tl$label), size=3.5, vjust=0.6)
+  geom_label(aes(y = tl$text_position, 
+                label = str_wrap(tl$label, 20)), 
+            size = 3, vjust=0.6, label.size = 0, 
+            label.padding = unit(0.1, "lines"),
+            show.legend = FALSE)
 
 
 
 # Print plot
 tl_plot
+
+
 
